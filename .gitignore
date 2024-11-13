@@ -1,0 +1,7 @@
+obj/
+build/
+out/
+
+.idea/
+
+*.so*

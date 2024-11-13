@@ -1,0 +1,18 @@
+﻿<Project Sdk="Laniakea.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!--
+    <Reference Include="Laniakea.NET.Core">
+      <HintPath>../../bin/Debug/net8.0/linux-x64/Laniakea.NET.Core.dll</HintPath>
+    </Reference>
+    -->
+  </ItemGroup>
+
+</Project>

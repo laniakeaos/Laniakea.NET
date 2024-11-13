@@ -1,0 +1,22 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup>
+    <CoreDllPath>/usr/share/dotnet/shared/Laniakea.NET/0.1.0/Laniakea.NET.Core.dll</CoreDllPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="Laniakea.NET">
+      <HintPath>$(CoreDllPath)</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <Target Name="AddFrameworksToRuntimeConfig" AfterTargets="Build">
+    <PropertyGroup>
+      <RuntimeConfigPath>$(OutDir)$(ProjectName).runtimeconfig.json</RuntimeConfigPath>
+    </PropertyGroup>
+
+    <Exec Command="python3 $(MSBuildThisFileDirectory)/../tools/modify-runtimeconfig-json.py $(RuntimeConfigPath) $(RuntimeConfigPath)" />
+  </Target>
+
+</Project>

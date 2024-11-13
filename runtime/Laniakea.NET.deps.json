@@ -1,0 +1,24 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0/linux-x64",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {},
+    ".NETCoreApp,Version=v8.0/linux-x64": {
+      "Laniakea.NET.Core/0.1.0": {
+        "runtime": {
+          "Laniakea.NET.Core.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Laniakea.NET.Core/0.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": ""
+    }
+  }
+}
