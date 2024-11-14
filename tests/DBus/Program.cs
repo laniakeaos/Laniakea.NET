@@ -13,8 +13,15 @@ public class Program
                 "org.freedesktop.Notifications",
                 "/org/freedesktop/Notifications",
                 "org.freedesktop.Notifications",
-                "Notify"
+                "CloseNotification"
             );
+            var arg = new DBusArgument((uint)8);
+            if (arg.Type != DBusType.UInt32) {
+                Console.WriteLine("Not UInt32 value!");
+            } else {
+                Console.WriteLine(arg.Value);
+            }
+            msg.Arguments.Add(arg);
 
             conn.Send(msg);
         } catch (DBusException e) {

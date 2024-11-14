@@ -94,19 +94,27 @@ public class DBusConnection
 
     public DBusMessage Send(DBusMessage message, int timeout = -1)
     {
+        IntPtr argsIter = CDBus.la_dbus_message_iter_new(message._cPtr);
         foreach (var arg in message.Arguments)
         {
             switch (arg.Type)
             {
                 case DBusType.Int32:
-                    CDBus.dbus_message_append_args(message._cPtr, [CDBus.DBUS_TYPE_INT32, (int)arg.Value]);
+                    // CDBus.dbus_message_append_args(message._cPtr, [CDBus.DBUS_TYPE_INT32, (int)arg.Value]);
+                    CDBus.la_dbus_message_append_int32_arg(message._cPtr, argsIter, (int)arg.Value);
+                    break;
+                case DBusType.UInt32:
+                    CDBus.la_dbus_message_append_uint32_arg(message._cPtr, argsIter, (uint)arg.Value);
+                    break;
+                case DBusType.String:
+                    // CDBus.dbus_message_append_args(message._cPtr, ]);
                     break;
                 default:
                     break;
             }
         }
 
-        CDBus.la_dbus_message_finish_arg(message._cPtr);
+        // CDBus.la_dbus_message_finish_arg(message._cPtr);
 
         // Error init.
         CDBus.DBusError err = new CDBus.DBusError();

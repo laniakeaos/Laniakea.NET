@@ -58,5 +58,14 @@ internal class CDBus
     internal static extern uint dbus_message_iter_append_basic(IntPtr iter, int type, [MarshalAs(UnmanagedType.LPStr)]string value);
 
     [DllImport(LibXdgDBusSo)]
+    internal static extern IntPtr la_dbus_message_iter_new(IntPtr message);
+
+    [DllImport(LibXdgDBusSo)]
+    internal static extern uint la_dbus_message_append_int32_arg(IntPtr message, IntPtr iter, int value);
+
+    [DllImport(LibXdgDBusSo)]
+    internal static extern uint la_dbus_message_append_uint32_arg(IntPtr message, IntPtr iter, uint value);
+
+    [DllImport(LibXdgDBusSo)]
     internal static extern uint la_dbus_message_finish_arg(IntPtr message);
 }
