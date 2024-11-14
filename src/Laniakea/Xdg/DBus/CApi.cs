@@ -1,6 +1,6 @@
 using System.Runtime.InteropServices;
 
-namespace Xdg.DBus.CApi;
+namespace Laniakea.Xdg.DBus.CApi;
 
 internal class CDBus
 {

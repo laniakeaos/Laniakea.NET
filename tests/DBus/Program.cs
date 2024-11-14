@@ -1,4 +1,4 @@
-﻿using Xdg.DBus;
+﻿using Laniakea.Xdg.DBus;
 
 namespace Laniakea.Tests.Xdg.DBus;
 

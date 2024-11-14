@@ -1,7 +1,7 @@
 using System.Runtime.InteropServices;
-using Xdg.DBus.CApi;
+using Laniakea.Xdg.DBus.CApi;
 
-namespace Xdg.DBus;
+namespace Laniakea.Xdg.DBus;
 
 public class DBusException : Exception
 {
