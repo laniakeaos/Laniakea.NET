@@ -4,8 +4,45 @@ namespace Laniakea.Tests.Xdg.DBus;
 
 public class Program
 {
+    private static void Introspect()
+    {
+        try
+        {
+            DBusConnection conn = new DBusConnection(DBusBusType.Session);
+
+            DBusMessage msg = DBusMessage.CreateMethodCall(
+                "org.freedesktop.Notifications",
+                "/",
+                "org.freedesktop.DBus.Introspectable",
+                "Introspect"
+            );
+            DBusMessage retMsg = conn.Send(msg);
+
+            Console.WriteLine(retMsg.Signature);
+            if (retMsg.Arguments.Count > 0) {
+                var arg = retMsg.Arguments[0];
+                var xmlStr = (string)arg.Value;
+                Console.WriteLine(xmlStr);
+
+                DBusIntrospection introspection = new DBusIntrospection(xmlStr);
+                Console.WriteLine(introspection);
+
+                foreach (DBusObject obj in introspection.Objects)
+                {
+                    Console.WriteLine(obj);
+                }
+            }
+        }
+        catch (DBusException e)
+        {
+            Console.WriteLine("Error!");
+        }
+    }
+
     public static void Main()
     {
+        Introspect();
+
         try {
             DBusConnection conn = new DBusConnection(DBusBusType.Session);
 

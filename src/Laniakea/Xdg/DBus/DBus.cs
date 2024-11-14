@@ -8,6 +8,33 @@ public class DBusException : Exception
     //
 }
 
+internal static class DBusMessageIterProcessor
+{
+    internal static List<DBusArgument> ProcessIterToList(IntPtr iter)
+    {
+        List<DBusArgument> arguments = new List<DBusArgument>();
+
+        do
+        {
+            int argType = CDBus.dbus_message_iter_get_arg_type(iter);
+            switch (argType)
+            {
+                case CDBus.DBUS_TYPE_STRING:
+                    IntPtr val = IntPtr.Zero;
+                    CDBus.dbus_message_iter_get_basic(iter, ref val);
+                    string str = Marshal.PtrToStringAnsi(val)!;
+                    arguments.Add(new DBusArgument(str));
+                    break;
+                default:
+                    break;
+            }
+            CDBus.dbus_message_iter_next(iter);
+        } while (CDBus.dbus_message_iter_has_next(iter) == 1);
+
+        return arguments;
+    }
+}
+
 public class DBusMessage
 {
     internal IntPtr _cPtr = IntPtr.Zero;
@@ -19,6 +46,7 @@ public class DBusMessage
     public string Method { get; set; }
     
     public List<DBusArgument> Arguments { get; set; } = [];
+    public string Signature { get; set; } = string.Empty;
 
     ~DBusMessage()
     {
@@ -94,7 +122,7 @@ public class DBusConnection
 
     public DBusMessage Send(DBusMessage message, int timeout = -1)
     {
-        IntPtr argsIter = CDBus.la_dbus_message_iter_new(message._cPtr);
+        IntPtr argsIter = CDBus.la_dbus_message_iter_append_new(message._cPtr);
         foreach (var arg in message.Arguments)
         {
             switch (arg.Type)
@@ -125,6 +153,23 @@ public class DBusConnection
         // TODO. Error check.
 
         DBusMessage retMsg = new DBusMessage();
+        retMsg.Type = DBusMessageType.MethodReturn;
+
+        // Get and set the signature.
+        IntPtr sig = CDBus.dbus_message_get_signature(cMsg);
+        string? signature = Marshal.PtrToStringAnsi(sig);
+        if (signature != null)
+        {
+            retMsg.Signature = signature;
+            IntPtr iter = CDBus.la_dbus_message_iter_new();
+            CDBus.dbus_message_iter_init(cMsg, iter);
+            var args = DBusMessageIterProcessor.ProcessIterToList(iter);
+            retMsg.Arguments = args;
+        }
+        else
+        {
+            retMsg.Signature = string.Empty;
+        }
 
         return retMsg;
     }

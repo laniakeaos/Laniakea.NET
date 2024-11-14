@@ -6,7 +6,14 @@
 #ifndef _LANIAKEA_DBUS_C
 #define _LANIAKEA_DBUS_C
 
-DBusMessageIter* la_dbus_message_iter_new(DBusMessage *msg)
+DBusMessageIter* la_dbus_message_iter_new()
+{
+    DBusMessageIter *iter = malloc(sizeof(DBusMessageIter));
+
+    return iter;
+}
+
+DBusMessageIter* la_dbus_message_iter_append_new(DBusMessage *msg)
 {
     DBusMessageIter *args_iter = malloc(sizeof(DBusMessageIter));
 
