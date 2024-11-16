@@ -4,6 +4,15 @@ namespace Laniakea.Tests.Xdg.DBus;
 
 public class Program
 {
+    private static void Signature()
+    {
+        string sigStr = "ia(ii){sv}a(i{sb})";
+        DBusSignature signature = new DBusSignature(sigStr);
+
+        Console.WriteLine("Signature string: " + signature);
+        Console.WriteLine("Count: 4 == " + signature.Count);
+    }
+
     private static void Introspect()
     {
         try
@@ -41,6 +50,8 @@ public class Program
 
     public static void Main()
     {
+        Signature();
+
         Introspect();
 
         try {
