@@ -122,7 +122,7 @@ public class DBusSignature : IEnumerable<DBusSignature>
         _string = str;
         _signatures = new List<string>();
 
-        string[] singleTypes = ["y", "b", "n", "q", "i", "u", "x", "t", "d", "h", "s", "o", "g"];
+        string[] singleTypes = ["y", "b", "n", "q", "i", "u", "x", "t", "d", "h", "s", "o", "g", "v"];
         while (str != "")
         {
             string start = str.Substring(0, 1);
@@ -190,8 +190,8 @@ public class DBusSignature : IEnumerable<DBusSignature>
                 return "";
             }
 
-            // TODO.
-            return "";
+            string innerStr = _string.Substring(1, _string.Length - 2);
+            return new DBusSignature(innerStr);
         }
     }
 
@@ -203,9 +203,23 @@ public class DBusSignature : IEnumerable<DBusSignature>
             {
                 return "";
             }
+
+            string innerStr = _string.Substring(1, _string.Length - 2);
+            return innerStr.Substring(0, 1);
+        }
+    }
+
+    public DBusSignature DictEntryValue
+    {
+        get
+        {
+            if (IsDictEntry() == false)
+            {
+                return "";
+            }
             
-            // TODO.
-            return "";
+            string innerStr = _string.Substring(1, _string.Length - 2);
+            return innerStr.Substring(1);
         }
     }
 

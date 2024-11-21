@@ -6,7 +6,7 @@ public class Program
 {
     private static void Signature()
     {
-        string sigStr = "ia(ii){sv}a(i{sb})";
+        string sigStr = "ia(ii(ss)){sv}a(i{sb})";
         DBusSignature signature = new DBusSignature(sigStr);
 
         Console.WriteLine("Signature string: " + signature);
@@ -16,9 +16,28 @@ public class Program
             Console.WriteLine(" - " + sig);
         }
 
-        Console.WriteLine("2nd: a(ii) == " + signature[1]);
+        // ArrayType for array type.
+        Console.WriteLine("2nd: a(ii(ss)) == " + signature[1]);
         DBusSignature arrayType = signature[1].ArrayType;
-        Console.WriteLine("(ii) == " + arrayType);
+        Console.WriteLine("(ii(ss)) == " + arrayType);
+
+        // InnerSignature for struct type.
+        if (arrayType.IsStruct())
+        {
+            DBusSignature innerTypes = arrayType.InnerSignature;
+            Console.WriteLine(innerTypes);
+        }
+        else
+        {
+            Console.WriteLine("Error! Not a struct.");
+        }
+
+        // DictEntry key and value.
+        DBusSignature dictEntry = signature[2];
+        Console.WriteLine("DictEntry: " + dictEntry);
+        DBusSignature key = dictEntry.DictEntryKey;
+        DBusSignature value = dictEntry.DictEntryValue;
+        Console.WriteLine(key + ", " + value);
     }
 
     private static void Introspect()
