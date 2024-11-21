@@ -1,5 +1,6 @@
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using System.Collections;
 
 using Laniakea.Xdg.DBus.CApi;
 
@@ -37,7 +38,7 @@ internal static class DBusMessageIterProcessor
     }
 }
 
-public class DBusSignature
+public class DBusSignature : IEnumerable<DBusSignature>
 {
     private string _string;
     private List<string> _signatures;
@@ -145,8 +146,10 @@ public class DBusSignature
                         arrStr += "a";
                         str = str.Substring(1);
                     }
-                    arrStr = ParseContainer(str);
-                    str = str.Substring(arrStr.Length);
+
+                    string cont = ParseContainer(str);
+                    arrStr += cont;
+                    str = str.Substring(cont.Length);
                 }
 
                 _signatures.Add(arrStr);
@@ -164,14 +167,66 @@ public class DBusSignature
         }
     }
 
+    public DBusSignature ArrayType
+    {
+        get
+        {
+            if (IsArray() == false)
+            {
+                return "";
+            }
+
+            string sigStr = _signatures[0].ToString();
+            return new DBusSignature(sigStr.Substring(1));
+        }
+    }
+
+    public DBusSignature InnerSignature
+    {
+        get
+        {
+            if (IsStruct() == false)
+            {
+                return "";
+            }
+
+            // TODO.
+            return "";
+        }
+    }
+
+    public DBusSignature DictEntryKey
+    {
+        get
+        {
+            if (IsDictEntry() == false)
+            {
+                return "";
+            }
+            
+            // TODO.
+            return "";
+        }
+    }
+
     public bool IsContainer()
     {
-        if (_string.StartsWith("(") || _string.StartsWith("{"))
+        if (IsStruct() && IsDictEntry())
         {
             return true;
         }
 
         return false;
+    }
+
+    public bool IsStruct()
+    {
+        return _string.StartsWith("(");
+    }
+
+    public bool IsDictEntry()
+    {
+        return _string.StartsWith("{");
     }
 
     public bool IsArray()
@@ -189,6 +244,18 @@ public class DBusSignature
         return _string;
     }
 
+    public DBusSignature this[int index] => _signatures[index];
+
+    public IEnumerator<DBusSignature> GetEnumerator()
+    {
+        foreach (string sig in _signatures)
+        {
+            yield return new DBusSignature(sig);
+        }
+    }
+
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
     public static implicit operator DBusSignature(string str) => new DBusSignature(str);
 
     public static implicit operator string(DBusSignature signature) => signature._string;
@@ -203,7 +270,7 @@ public class DBusMessage
     public string Path { get; set; }
     public string? Interface { get; set; }
     public string Method { get; set; }
-    
+
     public List<DBusArgument> Arguments { get; set; } = [];
     public string Signature { get; set; } = string.Empty;
 

@@ -11,6 +11,14 @@ public class Program
 
         Console.WriteLine("Signature string: " + signature);
         Console.WriteLine("Count: 4 == " + signature.Count);
+        foreach (DBusSignature sig in signature)
+        {
+            Console.WriteLine(" - " + sig);
+        }
+
+        Console.WriteLine("2nd: a(ii) == " + signature[1]);
+        DBusSignature arrayType = signature[1].ArrayType;
+        Console.WriteLine("(ii) == " + arrayType);
     }
 
     private static void Introspect()
