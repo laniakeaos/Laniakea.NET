@@ -8,7 +8,11 @@ namespace Laniakea.Xdg.DBus;
 
 public class DBusException : Exception
 {
-    //
+    public DBusException() { }
+
+    public DBusException(string message) : base(message)
+    {
+    }
 }
 
 internal static class DBusMessageIterProcessor
@@ -35,6 +39,56 @@ internal static class DBusMessageIterProcessor
         } while (CDBus.dbus_message_iter_has_next(iter) == 1);
 
         return arguments;
+    }
+
+    internal static void ProcessIterFromList(List<DBusArgument> arguments, DBusSignature signature, IntPtr iter)
+    {
+        if (arguments.Count != signature.Count)
+        {
+            throw new DBusException("Argument count mismatch.");
+        }
+
+        void CheckArgumentSignature(DBusType argType, DBusSignature argSig)
+        {
+            if (argType == DBusType.String && argSig == "s")
+            {
+                return;
+            } else if (argType == DBusType.Int32 && argSig == "i")
+            {
+                return;
+            }
+
+            throw new DBusException("Invalid argument signature.");
+        }
+
+        for (int i = 0; i < arguments.Count; ++i)
+        {
+            DBusArgument argument = arguments[i];
+            DBusSignature argSignature = signature[i];
+            CheckArgumentSignature(argument.Type, argSignature);
+
+            if (argSignature == "s")
+            {
+                string s = (string)argument.Value;
+                IntPtr sPtr = Marshal.StringToHGlobalAnsi(s);
+                CDBus.dbus_message_iter_append_basic(iter, CDBus.DBUS_TYPE_STRING, sPtr);
+                Marshal.FreeHGlobal(sPtr);
+            } else if (argSignature == "i")
+            {
+                int i32 = (int)argument.Value;
+                IntPtr iPtr = Marshal.AllocHGlobal(sizeof(int));
+                Marshal.WriteInt32(iPtr, i32);
+                CDBus.dbus_message_iter_append_basic(iter, CDBus.DBUS_TYPE_INT32, iPtr);
+                Marshal.FreeHGlobal(iPtr);
+            } else if (argSignature == "u")
+            {
+                IntPtr u32 = Marshal.AllocHGlobal(sizeof(uint));
+                IntPtr uPtr = Marshal.AllocHGlobal(sizeof(uint));
+                Marshal.WriteIntPtr(uPtr, u32);
+                CDBus.dbus_message_iter_append_basic(iter, CDBus.DBUS_TYPE_UINT32, uPtr);
+                Marshal.FreeHGlobal(uPtr);
+            }
+        }
     }
 }
 
@@ -286,7 +340,7 @@ public class DBusMessage
     public string Method { get; set; }
 
     public List<DBusArgument> Arguments { get; set; } = [];
-    public string Signature { get; set; } = string.Empty;
+    public DBusSignature Signature { get; set; } = string.Empty;
 
     ~DBusMessage()
     {
@@ -362,13 +416,13 @@ public class DBusConnection
 
     public DBusMessage Send(DBusMessage message, int timeout = -1)
     {
-        IntPtr argsIter = CDBus.la_dbus_message_iter_append_new(message._cPtr);
+        IntPtr argsIter = CDBus.la_dbus_message_iter_new();
+        CDBus.dbus_message_iter_init_append(message._cPtr, argsIter);
         foreach (var arg in message.Arguments)
         {
             switch (arg.Type)
             {
                 case DBusType.Int32:
-                    // CDBus.dbus_message_append_args(message._cPtr, [CDBus.DBUS_TYPE_INT32, (int)arg.Value]);
                     CDBus.la_dbus_message_append_int32_arg(message._cPtr, argsIter, (int)arg.Value);
                     break;
                 case DBusType.UInt32:

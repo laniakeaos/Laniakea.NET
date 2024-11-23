@@ -20,6 +20,7 @@ internal class CDBus
     }
 
     internal const int DBUS_TYPE_INT32 = 0x69;    // (int)'i'
+    internal const int DBUS_TYPE_UINT32 = (int)'u';
     internal const int DBUS_TYPE_STRING = 0x73;   // (int)'s'
     internal const int DBUS_TYPE_INVALID = 0x00;
 
@@ -62,6 +63,9 @@ internal class CDBus
     internal static extern uint dbus_message_iter_init(IntPtr message, IntPtr iter);
 
     [DllImport(LibdbusSo)]
+    internal static extern uint dbus_message_iter_init_append(IntPtr message, IntPtr iter);
+
+    [DllImport(LibdbusSo)]
     internal static extern uint dbus_message_iter_has_next(IntPtr iter);
 
     [DllImport(LibdbusSo)]
@@ -74,10 +78,13 @@ internal class CDBus
     internal static extern void dbus_message_iter_get_basic(IntPtr iter, ref IntPtr value);
 
     [DllImport(LibdbusSo)]
-    internal static extern uint dbus_message_iter_append_basic(IntPtr iter, int type, [MarshalAs(UnmanagedType.LPStr)]string value);
+    internal static extern uint dbus_message_iter_append_basic(IntPtr iter, int type, IntPtr value);
 
     [DllImport(LibXdgDBusSo)]
     internal static extern IntPtr la_dbus_message_iter_new();
+
+    [DllImport(LibXdgDBusSo)]
+    internal static extern IntPtr la_dbus_message_iter_free(IntPtr iter);
 
     [DllImport(LibXdgDBusSo)]
     internal static extern IntPtr la_dbus_message_iter_append_new(IntPtr message);

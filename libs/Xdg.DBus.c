@@ -22,6 +22,11 @@ DBusMessageIter* la_dbus_message_iter_append_new(DBusMessage *msg)
     return args_iter;
 }
 
+void la_dbus_message_iter_free(DBusMessageIter *iter)
+{
+    free(iter);
+}
+
 dbus_bool_t la_dbus_message_append_int32_arg(DBusMessage *msg,
                                              DBusMessageIter *iter,
                                              int value)
