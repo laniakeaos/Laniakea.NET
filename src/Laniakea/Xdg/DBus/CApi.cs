@@ -20,9 +20,16 @@ internal class CDBus
         private int p4;
     }
 
-    internal const int DBUS_TYPE_INT32 = 0x69;    // (int)'i'
+    internal const int DBUS_TYPE_BYTE = (int)'y';
+    internal const int DBUS_TYPE_BOOLEAN = (int)'b';
+    internal const int DBUS_TYPE_INT16 = (int)'n';
+    internal const int DBUS_TYPE_UINT16 = (int)'q';
+    internal const int DBUS_TYPE_INT32 = (int)'i';
     internal const int DBUS_TYPE_UINT32 = (int)'u';
-    internal const int DBUS_TYPE_STRING = 0x73;   // (int)'s'
+    internal const int DBUS_TYPE_INT64 = (int)'x';
+    internal const int DBUS_TYPE_UINT64 = (int)'t';
+    internal const int DBUS_TYPE_DOUBLE = (int)'d';
+    internal const int DBUS_TYPE_STRING = (int)'s';
     internal const int DBUS_TYPE_INVALID = 0x00;
 
     [DllImport(LibdbusSo)]

@@ -1,7 +1,7 @@
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Collections;
-
+using System.Security.Cryptography;
 using Laniakea.Xdg.DBus.CApi;
 
 namespace Laniakea.Xdg.DBus;
@@ -302,10 +302,7 @@ public class DBusSignature : IEnumerable<DBusSignature>
         return _string.StartsWith("a");
     }
 
-    public int Count
-    {
-        get => _signatures.Count;
-    }
+    public int Count => _signatures.Count;
 
     public override string ToString()
     {
@@ -368,10 +365,7 @@ public class DBusConnection
     private DBusBusType _busType;
     private IntPtr _cPtr = IntPtr.Zero;
 
-    public DBusBusType BusType
-    {
-        get => _busType;
-    }
+    public DBusBusType BusType => _busType;
 
     public DBusConnection(DBusBusType busType)
     {
@@ -572,10 +566,67 @@ public class DBusVariant
 
 public class DBusDictEntry
 {
+    private object _key = string.Empty;
+    private object _value = string.Empty;
+
     public DBusType KeyType { get; set; }
     public DBusType ValueType { get; set; }
-    
-    public object Key { get; set; }
+
+    public object Key
+    {
+        get => _key;
+        set
+        {
+            switch (value)
+            {
+                case byte b:
+                    _key = b;
+                    KeyType = DBusType.Byte;
+                    break;
+                case bool b:
+                    _key = b;
+                    KeyType = DBusType.Boolean;
+                    break;
+                case Int16 i16:
+                    _key = i16;
+                    KeyType = DBusType.Int16;
+                    break;
+                case UInt16 u16:
+                    _key = u16;
+                    KeyType = DBusType.UInt16;
+                    break;
+                case int i32:
+                    _key = i32;
+                    KeyType = DBusType.Int32;
+                    break;
+                case uint u32:
+                    _key = u32;
+                    KeyType = DBusType.UInt32;
+                    break;
+                case Int64 i64:
+                    _key = i64;
+                    KeyType = DBusType.Int64;
+                    break;
+                case UInt64 u64:
+                    _key = u64;
+                    KeyType = DBusType.UInt64;
+                    break;
+                case double d:
+                    _key = d;
+                    KeyType = DBusType.Double;
+                    break;
+                case string s:
+                    _key = s;
+                    KeyType = DBusType.String;
+                    break;
+                case DBusVariant v:
+                    _key = v;
+                    KeyType = DBusType.Variant;
+                    break;
+            }
+        }
+    }
+
     public object Value { get; set; }
 
     public DBusDictEntry()
