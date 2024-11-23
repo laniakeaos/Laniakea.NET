@@ -65,27 +65,74 @@ internal static class DBusMessageIterProcessor
         {
             DBusArgument argument = arguments[i];
             DBusSignature argSignature = signature[i];
+            int sig = 0;
+            if (argSignature.ToString().Length == 1)
+            {
+                sig = argSignature.ToString()[0];
+            }
             CheckArgumentSignature(argument.Type, argSignature);
 
-            if (argSignature == "s")
+            if (sig == CDBus.DBUS_TYPE_BYTE)
+            {
+                byte b = (byte)argument.Value;
+                IntPtr bPtr = Marshal.AllocHGlobal(sizeof(byte));
+                Marshal.WriteByte(bPtr, b);
+                CDBus.dbus_message_iter_append_basic(iter, CDBus.DBUS_TYPE_BYTE, bPtr);
+                Marshal.FreeHGlobal(bPtr);
+            } else if (sig == CDBus.DBUS_TYPE_BOOLEAN)
+            {
+                bool b = (bool)argument.Value;
+                IntPtr bPtr = Marshal.AllocHGlobal(sizeof(int));
+                Marshal.WriteInt32(bPtr, b == true ? 1 : 0);
+                CDBus.dbus_message_iter_append_basic(iter, CDBus.DBUS_TYPE_BOOLEAN, bPtr);
+                Marshal.FreeHGlobal(bPtr);
+            } else if (sig == CDBus.DBUS_TYPE_INT16)
+            {
+                Int16 i16 = (Int16)argument.Value;
+                IntPtr iPtr = Marshal.AllocHGlobal(sizeof(Int16));
+                Marshal.WriteInt16(iPtr, i16);
+                CDBus.dbus_message_iter_append_basic(iter, CDBus.DBUS_TYPE_INT16, iPtr);
+                Marshal.FreeHGlobal(iPtr);
+            } else if (sig == CDBus.DBUS_TYPE_UINT16)
+            {
+                UInt16 u16 = (UInt16)argument.Value;
+                IntPtr uPtr = Marshal.AllocHGlobal(sizeof(UInt16));
+                Marshal.WriteInt32(uPtr, u16);
+                CDBus.dbus_message_iter_append_basic(iter, CDBus.DBUS_TYPE_UINT16, uPtr);
+                Marshal.FreeHGlobal(uPtr);
+            } else if (sig == CDBus.DBUS_TYPE_STRING)
             {
                 string s = (string)argument.Value;
                 IntPtr sPtr = Marshal.StringToHGlobalAnsi(s);
                 CDBus.dbus_message_iter_append_basic(iter, CDBus.DBUS_TYPE_STRING, sPtr);
                 Marshal.FreeHGlobal(sPtr);
-            } else if (argSignature == "i")
+            } else if (sig == CDBus.DBUS_TYPE_INT32)
             {
                 int i32 = (int)argument.Value;
                 IntPtr iPtr = Marshal.AllocHGlobal(sizeof(int));
                 Marshal.WriteInt32(iPtr, i32);
                 CDBus.dbus_message_iter_append_basic(iter, CDBus.DBUS_TYPE_INT32, iPtr);
                 Marshal.FreeHGlobal(iPtr);
-            } else if (argSignature == "u")
+            } else if (sig == CDBus.DBUS_TYPE_UINT32)
             {
-                IntPtr u32 = Marshal.AllocHGlobal(sizeof(uint));
+                uint u32 = (uint)argument.Value;
                 IntPtr uPtr = Marshal.AllocHGlobal(sizeof(uint));
-                Marshal.WriteIntPtr(uPtr, u32);
+                Marshal.WriteInt64(uPtr, u32);
                 CDBus.dbus_message_iter_append_basic(iter, CDBus.DBUS_TYPE_UINT32, uPtr);
+                Marshal.FreeHGlobal(uPtr);
+            } else if (sig == CDBus.DBUS_TYPE_INT64)
+            {
+                Int64 i64 = (Int64)argument.Value;
+                IntPtr iPtr = Marshal.AllocHGlobal(sizeof(Int64));
+                Marshal.WriteInt64(iPtr, i64);
+                CDBus.dbus_message_iter_append_basic(iter, CDBus.DBUS_TYPE_INT64, iPtr);
+                Marshal.FreeHGlobal(iPtr);
+            } else if (sig == CDBus.DBUS_TYPE_UINT64)
+            {
+                UInt64 u64 = (UInt64)argument.Value;
+                IntPtr uPtr = Marshal.AllocHGlobal(sizeof(UInt64));
+                Marshal.WriteInt64(uPtr, unchecked((Int64)u64));
+                CDBus.dbus_message_iter_append_basic(iter, CDBus.DBUS_TYPE_UINT64, uPtr);
                 Marshal.FreeHGlobal(uPtr);
             }
         }
@@ -649,7 +696,7 @@ public class DBusDictEntry
 
 public class DBusArgument
 {
-    public DBusType Type { get; set; }
+    public DBusType Type { get; private set; }
     
     public object Value { get; set; }
 
