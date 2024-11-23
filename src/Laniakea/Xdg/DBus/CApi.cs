@@ -11,6 +11,7 @@ internal class CDBus
     internal const int DBUS_BUS_SYSTEM = 1;
     internal const int DBUS_BUS_STARTER = 2;
 
+    #pragma warning disable CS0169
     internal struct DBusError
     {
         private int p1;
@@ -38,9 +39,9 @@ internal class CDBus
 
     [DllImport(LibdbusSo)]
     internal static extern IntPtr dbus_message_new_method_call(
-        [MarshalAs(UnmanagedType.LPStr)] string destination,
+        [MarshalAs(UnmanagedType.LPStr)] string? destination,
         [MarshalAs(UnmanagedType.LPStr)] string path,
-        [MarshalAs(UnmanagedType.LPStr)] string iface,
+        [MarshalAs(UnmanagedType.LPStr)] string? iface,
         [MarshalAs(UnmanagedType.LPStr)] string method);
 
     [DllImport(LibdbusSo)]

@@ -335,9 +335,9 @@ public class DBusMessage
 
     public DBusMessageType Type { get; set; }
     public string? Destination { get; set; }
-    public string Path { get; set; }
+    public string Path { get; set; } = string.Empty;
     public string? Interface { get; set; }
-    public string Method { get; set; }
+    public string Method { get; set; } = string.Empty;
 
     public List<DBusArgument> Arguments { get; set; } = [];
     public DBusSignature Signature { get; set; } = string.Empty;
@@ -577,6 +577,14 @@ public class DBusDictEntry
     
     public object Key { get; set; }
     public object Value { get; set; }
+
+    public DBusDictEntry()
+    {
+        KeyType = DBusType.String;
+        ValueType = DBusType.Variant;
+        Key = string.Empty;
+        Value = new DBusVariant(string.Empty);
+    }
 
     public bool IsValid
     {
