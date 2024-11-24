@@ -30,6 +30,10 @@ internal class CDBus
     internal const int DBUS_TYPE_UINT64 = (int)'t';
     internal const int DBUS_TYPE_DOUBLE = (int)'d';
     internal const int DBUS_TYPE_STRING = (int)'s';
+    internal const int DBUS_TYPE_ARRAY = (int)'a';
+    internal const int DBUS_TYPE_VARIANT = (int)'v';
+    internal const int DBUS_TYPE_STRUCT = (int)'r';
+    internal const int DBUS_TYPE_DICT_ENTRY = (int)'e';
     internal const int DBUS_TYPE_INVALID = 0x00;
 
     [DllImport(LibdbusSo)]
@@ -87,6 +91,14 @@ internal class CDBus
 
     [DllImport(LibdbusSo)]
     internal static extern int dbus_message_iter_append_basic(IntPtr iter, int type, IntPtr value);
+
+    [DllImport(LibdbusSo)]
+    internal static extern int dbus_message_iter_open_container(IntPtr iter, int type,
+        [MarshalAs(UnmanagedType.LPStr)] string? containedSignature,
+        IntPtr sub);
+
+    [DllImport(LibdbusSo)]
+    internal static extern int dbus_message_iter_close_container(IntPtr iter, IntPtr sub);
 
     [DllImport(LibXdgDBusSo)]
     internal static extern IntPtr la_dbus_message_iter_new();

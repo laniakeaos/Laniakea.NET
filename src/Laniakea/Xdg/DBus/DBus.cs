@@ -15,6 +15,15 @@ public class DBusException : Exception
     }
 }
 
+internal class DBusInternalException : Exception
+{
+    public DBusInternalException() { }
+
+    public DBusInternalException(string message) : base(message)
+    {
+    }
+}
+
 internal class DBusMessageIter
 {
     private IntPtr _cIter = IntPtr.Zero;
@@ -111,6 +120,34 @@ internal class DBusMessageIter
         {
             Marshal.FreeHGlobal(cPtr);
         }
+
+        return result == 1 ? true : false;
+    }
+
+    public bool OpenContainer(DBusType type, DBusSignature? signature)
+    {
+        _subIter = new DBusMessageIter();
+        int cType = type switch
+        {
+            DBusType.Array => CDBus.DBUS_TYPE_ARRAY,
+            DBusType.Variant => CDBus.DBUS_TYPE_VARIANT,
+            DBusType.Struct => CDBus.DBUS_TYPE_STRUCT,
+            DBusType.DictEntry => CDBus.DBUS_TYPE_DICT_ENTRY,
+            _ => throw new DBusInternalException("Unknown type."),
+        };
+
+        int result = CDBus.dbus_message_iter_open_container(_cIter, cType, signature?.ToString(), _subIter._cIter);
+
+        return result == 1 ? true : false;
+    }
+
+    public bool CloseContainer()
+    {
+        if (_subIter == null)
+        {
+            throw new DBusInternalException("Can't close container because there is no sub-iter.");
+        }
+        int result = CDBus.dbus_message_iter_close_container(_cIter, _subIter._cIter);
 
         return result == 1 ? true : false;
     }
