@@ -4,10 +4,22 @@ namespace Laniakea.Tests.Xdg.DBus;
 
 public class Program
 {
+    private static void InvalidSignature()
+    {
+        string sigStr = "{ii";
+        // DBusSignature signature = new DBusSignature(sigStr);
+
+        Console.WriteLine("== Invalid Signature ==");
+        // Console.WriteLine("{ii == " + signature);
+        Console.WriteLine("=======================");
+    }
+
     private static void Signature()
     {
         string sigStr = "ia(ii(ss)){sv}a(i{sb})";
         DBusSignature signature = new DBusSignature(sigStr);
+
+        Console.WriteLine("== Signature ==");
 
         Console.WriteLine("Signature string: " + signature);
         Console.WriteLine("Count: 4 == " + signature.Count);
@@ -22,7 +34,7 @@ public class Program
         Console.WriteLine("(ii(ss)) == " + arrayType);
 
         // InnerSignature for struct type.
-        if (arrayType.IsStruct())
+        if (arrayType.IsStruct)
         {
             DBusSignature innerTypes = arrayType.InnerSignature;
             Console.WriteLine(innerTypes);
@@ -38,6 +50,8 @@ public class Program
         DBusSignature key = dictEntry.DictEntryKey;
         DBusSignature value = dictEntry.DictEntryValue;
         Console.WriteLine(key + ", " + value);
+
+        Console.WriteLine("==================");
     }
 
     private static void Introspect()
@@ -77,6 +91,8 @@ public class Program
 
     public static void Main()
     {
+        InvalidSignature();
+
         Signature();
 
         Introspect();

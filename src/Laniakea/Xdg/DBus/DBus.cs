@@ -347,6 +347,31 @@ public class DBusSignature : IEnumerable<DBusSignature>
         }
     }
 
+    public static DBusSignature TypeToSignature(DBusType type)
+    {
+        return type switch
+        {
+            DBusType.Byte => "y",
+            DBusType.Boolean => "b",
+            DBusType.Int16 => "n",
+            DBusType.UInt16 => "q",
+            DBusType.Int32 => "i",
+            DBusType.UInt32 => "u",
+            DBusType.Int64 => "x",
+            DBusType.UInt64 => "t",
+            DBusType.Double => "d",
+            DBusType.String => "s",
+            DBusType.ObjectPath => "o",
+            DBusType.Signature => "g",
+            DBusType.UnixFD => "h",
+            DBusType.Array => "a",
+            DBusType.Variant => "v",
+            DBusType.Struct => "r",
+            DBusType.DictEntry => "e",
+            _ => "",
+        };
+    }
+
     public DBusSignature ArrayType
     {
         get
@@ -449,6 +474,11 @@ public class DBusSignature : IEnumerable<DBusSignature>
     }
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+    public static DBusSignature operator +(DBusSignature left, DBusSignature right)
+    {
+        return new DBusSignature(left._string + right._string);
+    }
 
     public static implicit operator DBusSignature(string str) => new DBusSignature(str);
 
@@ -677,6 +707,17 @@ public class DBusVariant
         Type = DBusType.String;
         Value = value;
     }
+
+    /// <summary>
+    /// Get the signature of the variant type.
+    /// </summary>
+    public DBusSignature TypeSignature
+    {
+        get
+        {
+            return DBusSignature.TypeToSignature(Type);
+        }
+    }
 }
 
 public class DBusDictEntry
@@ -832,5 +873,13 @@ public class DBusArgument
     {
         Type = DBusType.Variant;
         Value = value;
+    }
+
+    public DBusSignature Signature
+    {
+        get
+        {
+            return DBusSignature.TypeToSignature(Type);
+        }
     }
 }
