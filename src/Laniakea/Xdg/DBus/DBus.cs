@@ -110,6 +110,11 @@ internal class DBusMessageIter
                 Marshal.WriteInt64(cPtr, unchecked((Int64)((UInt64)arg.Value)));
                 result = CDBus.dbus_message_iter_append_basic(_cIter, CDBus.DBUS_TYPE_UINT64, cPtr);
                 break;
+            case DBusType.Double:
+                cPtr = Marshal.AllocHGlobal(sizeof(double));
+                Marshal.StructureToPtr<double>((double)arg.Value, cPtr, false);
+                result = CDBus.dbus_message_iter_append_basic(_cIter, CDBus.DBUS_TYPE_DOUBLE, cPtr);
+                break;
             case DBusType.String:
                 cPtr = Marshal.StringToHGlobalAnsi((string)arg.Value);
                 result = CDBus.dbus_message_iter_append_basic(_cIter, CDBus.DBUS_TYPE_STRING, cPtr);
@@ -202,6 +207,11 @@ internal class DBusMessageIter
                     CDBus.dbus_message_iter_get_basic(_cIter, ref cPtr);
                     UInt64 u64Val = unchecked((UInt64)Marshal.ReadInt64(cPtr));
                     list.Add(new DBusArgument(u64Val));
+                    break;
+                case CDBus.DBUS_TYPE_DOUBLE:
+                    CDBus.dbus_message_iter_get_basic(_cIter, ref cPtr);
+                    double dVal = Marshal.PtrToStructure<double>(cPtr);
+                    list.Add(new DBusArgument(dVal));
                     break;
                 case CDBus.DBUS_TYPE_STRING:
                     CDBus.dbus_message_iter_get_basic(_cIter, ref cPtr);
