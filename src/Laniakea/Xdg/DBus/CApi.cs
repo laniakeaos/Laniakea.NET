@@ -86,7 +86,7 @@ internal class CDBus
     internal static extern void dbus_message_iter_get_basic(IntPtr iter, ref IntPtr value);
 
     [DllImport(LibdbusSo)]
-    internal static extern uint dbus_message_iter_append_basic(IntPtr iter, int type, IntPtr value);
+    internal static extern int dbus_message_iter_append_basic(IntPtr iter, int type, IntPtr value);
 
     [DllImport(LibXdgDBusSo)]
     internal static extern IntPtr la_dbus_message_iter_new();

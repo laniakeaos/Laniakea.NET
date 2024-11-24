@@ -139,6 +139,107 @@ internal static class DBusMessageIterProcessor
     }
 }
 
+internal class DBusMessageIter
+{
+    private IntPtr _cIter = IntPtr.Zero;
+    private DBusMessageIter? _subIter = null;
+    private IntPtr _cMessage = IntPtr.Zero;
+
+    public DBusMessageIter()
+    {
+        _cIter = CDBus.la_dbus_message_iter_new();
+    }
+
+    ~DBusMessageIter()
+    {
+        CDBus.la_dbus_message_iter_free(_cIter);
+    }
+
+    public static DBusMessageIter InitAppend(IntPtr message)
+    {
+        DBusMessageIter iter = new DBusMessageIter();
+        iter._cMessage = message;
+        CDBus.dbus_message_iter_init_append(message, iter._cIter);
+
+        return iter;
+    }
+
+    public static DBusMessageIter Init(IntPtr message)
+    {
+        DBusMessageIter iter = new DBusMessageIter();
+        iter._cMessage = message;
+        CDBus.dbus_message_iter_init(message, iter._cIter);
+
+        return iter;
+    }
+
+    public DBusMessageIter? SubIter
+    {
+        get => _subIter;
+    }
+
+    public bool AppendBasic(DBusArgument arg)
+    {
+        IntPtr cPtr = IntPtr.Zero;
+        int result = 0;
+
+        switch (arg.Type)
+        {
+            case DBusType.Byte:
+                cPtr = Marshal.AllocHGlobal(sizeof(byte));
+                Marshal.WriteByte(cPtr, (byte)arg.Value);
+                result = CDBus.dbus_message_iter_append_basic(_cIter, CDBus.DBUS_TYPE_BYTE, cPtr);
+                break;
+            case DBusType.Boolean:
+                cPtr = Marshal.AllocHGlobal(sizeof(int));
+                Marshal.WriteInt32(cPtr, (bool)arg.Value == true ? 1 : 0);
+                result = CDBus.dbus_message_iter_append_basic(_cIter, CDBus.DBUS_TYPE_BOOLEAN, cPtr);
+                break;
+            case DBusType.Int16:
+                cPtr = Marshal.AllocHGlobal(sizeof(Int16));
+                Marshal.WriteInt16(cPtr, (Int16)arg.Value);
+                result = CDBus.dbus_message_iter_append_basic(_cIter, CDBus.DBUS_TYPE_INT16, cPtr);
+                break;
+            case DBusType.UInt16:
+                cPtr = Marshal.AllocHGlobal(sizeof(UInt16));
+                Marshal.WriteInt16(cPtr, unchecked((Int16)((UInt16)arg.Value)));
+                result = CDBus.dbus_message_iter_append_basic(_cIter, CDBus.DBUS_TYPE_UINT16, cPtr);
+                break;
+            case DBusType.Int32:
+                cPtr = Marshal.AllocHGlobal(sizeof(int));
+                Marshal.WriteInt32(cPtr, (int)arg.Value);
+                result = CDBus.dbus_message_iter_append_basic(_cIter, CDBus.DBUS_TYPE_INT32, cPtr);
+                break;
+            case DBusType.UInt32:
+                cPtr = Marshal.AllocHGlobal(sizeof(uint));
+                Marshal.WriteInt32(cPtr, unchecked((int)((uint)arg.Value)));
+                result = CDBus.dbus_message_iter_append_basic(_cIter, CDBus.DBUS_TYPE_UINT32, cPtr);
+                break;
+            case DBusType.Int64:
+                cPtr = Marshal.AllocHGlobal(sizeof(Int64));
+                Marshal.WriteInt64(cPtr, (Int64)arg.Value);
+                result = CDBus.dbus_message_iter_append_basic(_cIter, CDBus.DBUS_TYPE_INT64, cPtr);
+                break;
+            case DBusType.UInt64:
+                cPtr = Marshal.AllocHGlobal(sizeof(UInt64));
+                Marshal.WriteInt64(cPtr, unchecked((Int64)((UInt64)arg.Value)));
+                result = CDBus.dbus_message_iter_append_basic(_cIter, CDBus.DBUS_TYPE_UINT64, cPtr);
+                break;
+            case DBusType.String:
+                cPtr = Marshal.StringToHGlobalAnsi((string)arg.Value);
+                result = CDBus.dbus_message_iter_append_basic(_cIter, CDBus.DBUS_TYPE_STRING, cPtr);
+                break;
+        }
+
+        if (cPtr != IntPtr.Zero)
+        {
+            Marshal.FreeHGlobal(cPtr);
+        }
+
+        return result == 1 ? true : false;
+    }
+}
+
 public class DBusSignature : IEnumerable<DBusSignature>
 {
     private string _string;
@@ -318,7 +419,7 @@ public class DBusSignature : IEnumerable<DBusSignature>
             {
                 return "";
             }
-            
+
             string innerStr = _string.Substring(1, _string.Length - 2);
             return innerStr.Substring(1);
         }
@@ -697,7 +798,7 @@ public class DBusDictEntry
 public class DBusArgument
 {
     public DBusType Type { get; private set; }
-    
+
     public object Value { get; set; }
 
     public DBusArgument(byte value)
