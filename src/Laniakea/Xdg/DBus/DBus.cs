@@ -15,33 +15,6 @@ public class DBusException : Exception
     }
 }
 
-internal static class DBusMessageIterProcessor
-{
-    internal static List<DBusArgument> ProcessIterToList(IntPtr iter)
-    {
-        List<DBusArgument> arguments = new List<DBusArgument>();
-
-        do
-        {
-            int argType = CDBus.dbus_message_iter_get_arg_type(iter);
-            switch (argType)
-            {
-                case CDBus.DBUS_TYPE_STRING:
-                    IntPtr val = IntPtr.Zero;
-                    CDBus.dbus_message_iter_get_basic(iter, ref val);
-                    string str = Marshal.PtrToStringAnsi(val)!;
-                    arguments.Add(new DBusArgument(str));
-                    break;
-                default:
-                    break;
-            }
-            CDBus.dbus_message_iter_next(iter);
-        } while (CDBus.dbus_message_iter_has_next(iter) == 1);
-
-        return arguments;
-    }
-}
-
 internal class DBusMessageIter
 {
     private IntPtr _cIter = IntPtr.Zero;
@@ -140,6 +113,71 @@ internal class DBusMessageIter
         }
 
         return result == 1 ? true : false;
+    }
+
+    public List<DBusArgument> ToArgumentList()
+    {
+        List<DBusArgument> list = [];
+
+        do
+        {
+            IntPtr cPtr = IntPtr.Zero;
+
+            int argType = CDBus.dbus_message_iter_get_arg_type(_cIter);
+            switch (argType)
+            {
+                case CDBus.DBUS_TYPE_BYTE:
+                    CDBus.dbus_message_iter_get_basic(_cIter, ref cPtr);
+                    byte val = Marshal.PtrToStructure<byte>(cPtr);
+                    list.Add(new DBusArgument(val));
+                    break;
+                case CDBus.DBUS_TYPE_BOOLEAN:
+                    CDBus.dbus_message_iter_get_basic(_cIter, ref cPtr);
+                    int boolVal = Marshal.ReadInt32(cPtr);
+                    list.Add(new DBusArgument(boolVal == 1 ? true : false));
+                    break;
+                case CDBus.DBUS_TYPE_INT16:
+                    CDBus.dbus_message_iter_get_basic(_cIter, ref cPtr);
+                    Int16 i16Val = Marshal.ReadInt16(cPtr);
+                    list.Add(new DBusArgument(i16Val));
+                    break;
+                case CDBus.DBUS_TYPE_UINT16:
+                    CDBus.dbus_message_iter_get_basic(_cIter, ref cPtr);
+                    UInt16 u16Val = unchecked((UInt16)Marshal.ReadInt16(cPtr));
+                    list.Add(new DBusArgument(u16Val));
+                    break;
+                case CDBus.DBUS_TYPE_INT32:
+                    CDBus.dbus_message_iter_get_basic(_cIter, ref cPtr);
+                    int i32Val = Marshal.ReadInt32(cPtr);
+                    list.Add(new DBusArgument(i32Val));
+                    break;
+                case CDBus.DBUS_TYPE_UINT32:
+                    CDBus.dbus_message_iter_get_basic(_cIter, ref cPtr);
+                    uint u32Val = unchecked((uint)Marshal.ReadInt32(cPtr));
+                    list.Add(new DBusArgument(u32Val));
+                    break;
+                case CDBus.DBUS_TYPE_INT64:
+                    CDBus.dbus_message_iter_get_basic(_cIter, ref cPtr);
+                    Int64 i64Val = Marshal.ReadInt64(cPtr);
+                    list.Add(new DBusArgument(i64Val));
+                    break;
+                case CDBus.DBUS_TYPE_UINT64:
+                    CDBus.dbus_message_iter_get_basic(_cIter, ref cPtr);
+                    UInt64 u64Val = unchecked((UInt64)Marshal.ReadInt64(cPtr));
+                    list.Add(new DBusArgument(u64Val));
+                    break;
+                case CDBus.DBUS_TYPE_STRING:
+                    CDBus.dbus_message_iter_get_basic(_cIter, ref cPtr);
+                    string str = Marshal.PtrToStringAnsi(cPtr)!;
+                    list.Add(new DBusArgument(str));
+                    break;
+                default:
+                    break;
+            }
+            CDBus.dbus_message_iter_next(_cIter);
+        } while (CDBus.dbus_message_iter_has_next(_cIter) == 1);
+
+        return list;
     }
 }
 
@@ -467,8 +505,6 @@ public class DBusConnection
             argsIter.AppendBasic(arg);
         }
 
-        // CDBus.la_dbus_message_finish_arg(message._cPtr);
-
         // Error init.
         CDBus.DBusError err = new CDBus.DBusError();
         IntPtr errPtr = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(CDBus.DBusError)));
@@ -486,9 +522,8 @@ public class DBusConnection
         if (signature != null)
         {
             retMsg.Signature = signature;
-            IntPtr iter = CDBus.la_dbus_message_iter_new();
-            CDBus.dbus_message_iter_init(cMsg, iter);
-            var args = DBusMessageIterProcessor.ProcessIterToList(iter);
+            DBusMessageIter iter = DBusMessageIter.Init(cMsg);
+            var args = iter.ToArgumentList();
             retMsg.Arguments = args;
         }
         else
