@@ -351,7 +351,7 @@ public class DBusSignature : IEnumerable<DBusSignature>
     {
         get
         {
-            if (IsArray() == false)
+            if (IsArray == false)
             {
                 return "";
             }
@@ -365,7 +365,7 @@ public class DBusSignature : IEnumerable<DBusSignature>
     {
         get
         {
-            if (IsStruct() == false)
+            if (IsStruct == false)
             {
                 return "";
             }
@@ -379,7 +379,7 @@ public class DBusSignature : IEnumerable<DBusSignature>
     {
         get
         {
-            if (IsDictEntry() == false)
+            if (IsDictEntry == false)
             {
                 return "";
             }
@@ -393,7 +393,7 @@ public class DBusSignature : IEnumerable<DBusSignature>
     {
         get
         {
-            if (IsDictEntry() == false)
+            if (IsDictEntry == false)
             {
                 return "";
             }
@@ -403,29 +403,32 @@ public class DBusSignature : IEnumerable<DBusSignature>
         }
     }
 
-    public bool IsContainer()
+    public bool IsContainer
     {
-        if (IsStruct() && IsDictEntry())
+        get
         {
-            return true;
+            if (IsStruct && IsDictEntry)
+            {
+                return true;
+            }
+
+            return false;
         }
-
-        return false;
     }
 
-    public bool IsStruct()
+    public bool IsStruct
     {
-        return _string.StartsWith("(");
+        get { return _string.StartsWith("("); }
     }
 
-    public bool IsDictEntry()
+    public bool IsDictEntry
     {
-        return _string.StartsWith("{");
+        get { return _string.StartsWith("{"); }
     }
 
-    public bool IsArray()
+    public bool IsArray
     {
-        return _string.StartsWith("a");
+        get { return _string.StartsWith("a"); }
     }
 
     public int Count => _signatures.Count;
