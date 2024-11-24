@@ -1,7 +1,7 @@
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Collections;
-using System.Security.Cryptography;
+
 using Laniakea.Xdg.DBus.CApi;
 
 namespace Laniakea.Xdg.DBus;
@@ -542,7 +542,10 @@ public class DBusConnection
         DBusMessageIter argsIter = DBusMessageIter.InitAppend(message._cPtr);
         foreach (var arg in message.Arguments)
         {
-            argsIter.AppendBasic(arg);
+            if (arg.Type != DBusType.Array && arg.Type != DBusType.Variant && arg.Type != DBusType.Struct && arg.Type != DBusType.DictEntry)
+            {
+                argsIter.AppendBasic(arg);
+            }
         }
 
         // Error init.
