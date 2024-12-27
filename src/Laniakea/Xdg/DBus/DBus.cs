@@ -653,6 +653,102 @@ public enum DBusMessageType
     Signal,
 }
 
+public class DBusArray
+{
+    private DBusType _type;
+    private List<object> _values = [];
+    private DBusSignature _typeSignature;
+
+    private void ValidateType(object value)
+    {
+        switch (_type)
+        {
+            case DBusType.Byte when value.GetType() != typeof(byte):
+            case DBusType.Boolean when value.GetType() != typeof(bool):
+            case DBusType.Int16 when value.GetType() != typeof(Int16):
+            case DBusType.UInt16 when value.GetType() != typeof(UInt16):
+            case DBusType.Int32 when value.GetType() != typeof(Int32):
+            case DBusType.UInt32 when value.GetType() != typeof(UInt32):
+            case DBusType.Int64 when value.GetType() != typeof(Int64):
+            case DBusType.UInt64 when value.GetType() != typeof(UInt64):
+            case DBusType.Double when value.GetType() != typeof(Double):
+            case DBusType.String when value.GetType() != typeof(string):
+            case DBusType.Array when value.GetType() != typeof(DBusArray):
+            case DBusType.Variant when value.GetType() != typeof(DBusVariant):
+            // TODO: case DBusType.Struct when value.GetType() != typeof(DBusStruct):
+            case DBusType.DictEntry when value.GetType() != typeof(DBusDictEntry):
+                throw new ArgumentException("Type is mismatch.");
+            default:
+                return;
+        }
+    }
+
+    public DBusArray(DBusType type)
+    {
+        _type = type;
+    }
+
+    public void Add(byte value)
+    {
+        ValidateType(value);
+        _values.Add(value);
+    }
+
+    public void Add(bool value)
+    {
+        ValidateType(value);
+        _values.Add(value);
+    }
+
+    public void Add(Int16 value)
+    {
+        ValidateType(value);
+        _values.Add(value);
+    }
+
+    public void Add(UInt16 value)
+    {
+        ValidateType(value);
+        _values.Add(value);
+    }
+
+    public void Add(int value)
+    {
+        ValidateType(value);
+        _values.Add(value);
+    }
+
+    public void Add(uint value)
+    {
+        ValidateType(value);
+        _values.Add(value);
+    }
+
+    public void Add(Int64 value)
+    {
+        ValidateType(value);
+        _values.Add(value);
+    }
+
+    public void Add(UInt64 value)
+    {
+        ValidateType(value);
+        _values.Add(value);
+    }
+
+    public void Add(double value)
+    {
+        ValidateType(value);
+        _values.Add(value);
+    }
+
+    public void Add(string value)
+    {
+        ValidateType(value);
+        _values.Add(value);
+    }
+}
+
 public class DBusVariant
 {
     public DBusType Type { get; set; }
