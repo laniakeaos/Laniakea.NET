@@ -20,6 +20,24 @@ internal class CDBus
         private int p4;
     }
 
+    internal struct DBusMessageIter
+    {
+        IntPtr dummy1;
+        IntPtr dummy2;
+        UInt32 dummy3;
+        int dummy4;
+        int dummy5;
+        int dummy6;
+        int dummy7;
+        int dummy8;
+        int dummy9;
+        int dummy10;
+        int dummy11;
+        int pad1;
+        IntPtr pad2;
+        IntPtr pad3;
+    };
+
     internal const int DBUS_TYPE_BYTE = (int)'y';
     internal const int DBUS_TYPE_BOOLEAN = (int)'b';
     internal const int DBUS_TYPE_INT16 = (int)'n';
@@ -72,33 +90,33 @@ internal class CDBus
     internal static extern IntPtr dbus_message_get_signature(IntPtr message);
 
     [DllImport(LibdbusSo)]
-    internal static extern uint dbus_message_iter_init(IntPtr message, IntPtr iter);
+    internal static extern uint dbus_message_iter_init(IntPtr message, ref CDBus.DBusMessageIter iter);
 
     [DllImport(LibdbusSo)]
-    internal static extern uint dbus_message_iter_init_append(IntPtr message, IntPtr iter);
+    internal static extern uint dbus_message_iter_init_append(IntPtr message, ref CDBus.DBusMessageIter iter);
 
     [DllImport(LibdbusSo)]
-    internal static extern uint dbus_message_iter_has_next(IntPtr iter);
+    internal static extern uint dbus_message_iter_has_next(ref CDBus.DBusMessageIter iter);
 
     [DllImport(LibdbusSo)]
-    internal static extern uint dbus_message_iter_next(IntPtr iter);
+    internal static extern uint dbus_message_iter_next(ref CDBus.DBusMessageIter iter);
 
     [DllImport(LibdbusSo)]
-    internal static extern int dbus_message_iter_get_arg_type(IntPtr iter);
+    internal static extern int dbus_message_iter_get_arg_type(ref CDBus.DBusMessageIter iter);
 
     [DllImport(LibdbusSo)]
-    internal static extern void dbus_message_iter_get_basic(IntPtr iter, ref IntPtr value);
+    internal static extern void dbus_message_iter_get_basic(ref CDBus.DBusMessageIter iter, ref IntPtr value);
 
     [DllImport(LibdbusSo)]
-    internal static extern int dbus_message_iter_append_basic(IntPtr iter, int type, IntPtr value);
+    internal static extern int dbus_message_iter_append_basic(ref CDBus.DBusMessageIter iter, int type, IntPtr value);
 
     [DllImport(LibdbusSo)]
-    internal static extern int dbus_message_iter_open_container(IntPtr iter, int type,
+    internal static extern int dbus_message_iter_open_container(ref CDBus.DBusMessageIter iter, int type,
         [MarshalAs(UnmanagedType.LPStr)] string? containedSignature,
-        IntPtr sub);
+        ref CDBus.DBusMessageIter sub);
 
     [DllImport(LibdbusSo)]
-    internal static extern int dbus_message_iter_close_container(IntPtr iter, IntPtr sub);
+    internal static extern int dbus_message_iter_close_container(ref CDBus.DBusMessageIter iter, ref CDBus.DBusMessageIter sub);
 
     [DllImport(LibXdgDBusSo)]
     internal static extern IntPtr la_dbus_message_iter_new();
