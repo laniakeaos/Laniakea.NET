@@ -8,7 +8,6 @@ default:
 
 runtime:
 	mkdir -p $(RUNTIME_OUTPUT_DIR)
-	cp build/Release/libXdg.DBus.so $(RUNTIME_OUTPUT_DIR)/
 	cp build/Release/Laniakea.NET.Core.dll $(RUNTIME_OUTPUT_DIR)/
 	cp runtime/Laniakea.NET.deps.json $(RUNTIME_OUTPUT_DIR)/
 	cp runtime/Laniakea.NET.runtimeconfig.json $(RUNTIME_OUTPUT_DIR)/
