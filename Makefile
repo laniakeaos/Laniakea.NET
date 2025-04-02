@@ -5,8 +5,6 @@ SDK_OUTPUT_DIR=out/sdk/Sdks/Laniakea.NET.Sdk/
 
 default:
 	dotnet build --configuration Release Laniakea.NET.sln
-	cd libs ; make
-	cp libs/libXdg.DBus.so build/Release/libXdg.DBus.so
 
 runtime:
 	mkdir -p $(RUNTIME_OUTPUT_DIR)
@@ -38,6 +36,6 @@ install-sdk:
 	cp -r out/sdk/Sdks/Laniakea.NET.Sdk $(DESTDIR)/usr/share/dotnet/sdk/$(DOTNET_SDK_VERSION)/Sdks/
 
 clean:
-	rm -rf out
+	rm -rf out build
 
 .PHONY: runtime sdk
