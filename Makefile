@@ -35,6 +35,6 @@ install-sdk:
 	cp -r out/sdk/Sdks/Laniakea.NET.Sdk $(DESTDIR)/usr/share/dotnet/sdk/$(DOTNET_SDK_VERSION)/Sdks/
 
 clean:
-	rm -rf out build
+	rm -rf out build obj
 
 .PHONY: runtime sdk
