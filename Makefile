@@ -1,7 +1,7 @@
 VERSION="0.1.0"
 RUNTIME_OUTPUT_DIR=out/shared/Laniakea.NET/$(VERSION)/
 SDK_OUTPUT_DIR=out/sdk/Sdks/Laniakea.NET.Sdk/
-DOTNET_SDK_VERSION=$(shell dotnet --list-sdks | head -1 | cut -d ' ' -f 1)
+# DOTNET_SDK_VERSION=$(shell dotnet --list-sdks | head -1 | cut -d ' ' -f 1)
 
 default:
 	dotnet build --configuration Release Laniakea.NET.sln
@@ -28,6 +28,14 @@ install: out/shared out/sdk
 uninstall:
 	rm -rf /usr/share/dotnet/shared/Laniakea.NET
 	rm -rf /usr/share/dotnet/sdk/$(DOTNET_SDK_VERSION)/Sdks/Laniakea.NET.Sdk
+
+install-runtime:
+	install -d -m755 $(DESTDIR)/usr/share/dotnet/shared/
+	cp -r out/shared/Laniakea.NET $(DESTDIR)/usr/share/dotnet/shared/
+
+install-sdk:
+	install -d -m755 $(DESTDIR)/usr/share/dotnet/sdk/$(DOTNET_SDK_VERSION)/Sdks/
+	cp -r out/sdk/Sdks/Laniakea.NET.Sdk $(DESTDIR)/usr/share/dotnet/sdk/$(DOTNET_SDK_VERSION)/Sdks/
 
 clean:
 	rm -rf out
