@@ -1,4 +1,4 @@
-VERSION="0.1.0"
+VERSION="0.2.0"
 RUNTIME_OUTPUT_DIR=out/shared/Laniakea.NET/$(VERSION)/
 SDK_OUTPUT_DIR=out/sdk/Sdks/Laniakea.NET.Sdk/
 # DOTNET_SDK_VERSION=$(shell dotnet --list-sdks | head -1 | cut -d ' ' -f 1)

@@ -5,7 +5,7 @@ import json
 from collections import OrderedDict
 
 FRAMEWORK_NAME = 'Laniakea.NET'
-FRAMEWORK_VERSION = '0.1.0'
+FRAMEWORK_VERSION = '0.2.0'
 
 def has_my_lib_framework(frameworks):
     for fw in frameworks:
