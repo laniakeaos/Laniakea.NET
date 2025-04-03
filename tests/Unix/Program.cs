@@ -1,9 +1,16 @@
 ﻿using Laniakea.Unix;
+using Laniakea.Unix.Identity;
 
 namespace Laniakea.Tests.Unix;
 
 public class Program
 {
+    private static void UserInfo()
+    {
+        UnixUserInfo userInfo = new UnixUserInfo("root");
+        Console.WriteLine($"{userInfo.Name} - uid: {userInfo.Uid}, gid: {userInfo.Gid}");
+    }
+
     public static void Main()
     {
         try {
@@ -17,5 +24,7 @@ public class Program
         } catch (Exception e) {
             Console.WriteLine(e);
         }
+
+        UserInfo();
     }
 }
